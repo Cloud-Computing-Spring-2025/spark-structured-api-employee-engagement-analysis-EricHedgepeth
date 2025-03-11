@@ -44,8 +44,19 @@ def identify_valued_no_suggestions(df):
     # 2. Among these, filter those with ProvidedSuggestions == False.
     # 3. Calculate the number and proportion of these employees.
     # 4. Return the results.
+    
+    valued_employees_df = df.filter(col("SatisfactionRating") >= 4)
+    
+    valued_no_suggestions_df = valued_employees_df.filter(col("ProvidedSuggestions") == False)
+    
+    number_of_employees = valued_no_suggestions_df.count()
+    
+    total_employees = df.count()
+    proportion = (number_of_employees / total_employees) * 100 if total_employees > 0 else 0
+    
+    return number_of_employees, round(proportion, 2)
+    
 
-    pass  # Remove this line after implementing the function
 
 def write_output(number, proportion, output_path):
     """
@@ -71,8 +82,8 @@ def main():
     spark = initialize_spark()
     
     # Define file paths
-    input_file = "/workspaces/Employee_Engagement_Analysis_Spark/input/employee_data.csv"
-    output_file = "/workspaces/Employee_Engagement_Analysis_Spark/outputs/task2/valued_no_suggestions.txt"
+    input_file = "/workspaces/spark-structured-api-employee-engagement-analysis-EricHedgepeth/input/employee_data.csv"
+    output_file = "/workspaces/spark-structured-api-employee-engagement-analysis-EricHedgepeth/outputs/valued_no_suggestions.txt"
     
     # Load data
     df = load_data(spark, input_file)

@@ -38,13 +38,13 @@ def map_engagement_level(df):
     Returns:
         DataFrame: DataFrame with an additional column for numerical EngagementScore.
     """
-    # TODO: Implement mapping of EngagementLevel to numerical values
-    # Example:
-    # 'Low' -> 1
-    # 'Medium' -> 2
-    # 'High' -> 3
-
-    pass  # Remove this line after implementing the function
+    return df.withColumn(
+        "EngagementScore",
+        when(col("EngagementLevel") == "Low", 1)
+        .when(col("EngagementLevel") == "Medium", 2)
+        .when(col("EngagementLevel") == "High", 3)
+        .otherwise(None)  # Handles unexpected values
+    )
 
 def compare_engagement_levels(df):
     """
@@ -62,8 +62,12 @@ def compare_engagement_levels(df):
     # 2. Group by JobTitle and calculate average EngagementScore.
     # 3. Round the average to two decimal places.
     # 4. Return the result DataFrame.
+    
+    
+    return df.groupBy("JobTitle").agg(spark_round(avg("EngagementScore"), 2).alias("AvgEngagementLevel"))
 
-    pass  # Remove this line after implementing the function
+
+    
 
 def write_output(result_df, output_path):
     """
@@ -86,8 +90,8 @@ def main():
     spark = initialize_spark()
     
     # Define file paths
-    input_file = "/workspaces/Employee_Engagement_Analysis_Spark/input/employee_data.csv"
-    output_file = "/workspaces/Employee_Engagement_Analysis_Spark/outputs/task3/engagement_levels_job_titles.csv"
+    input_file = "/workspaces/spark-structured-api-employee-engagement-analysis-EricHedgepeth/input/employee_data.csv"
+    output_file = "/workspaces/spark-structured-api-employee-engagement-analysis-EricHedgepeth/outputs/engagement_levels_job_titles.csv"
     
     # Load data
     df = load_data(spark, input_file)
